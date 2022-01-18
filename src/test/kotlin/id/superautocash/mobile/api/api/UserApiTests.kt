@@ -43,6 +43,26 @@ class UserApiTests: BaseApiTests() {
     }
 
     @Test
+    fun registerUserExists() {
+        val md5 = MessageDigest.getInstance("MD5")
+        val request = UserRegisterRequest(
+            password = BigInteger(1, md5.digest("1234!@#$".toByteArray())).toString(16).padStart(32, '0'),
+            username = "firzagustama",
+            email = "firza.gustama@gmail.com",
+            phoneNumber = "08192384719",
+            fullName = "Muhammad Firza Gustama"
+        )
+        val response = post("/register", request, UserRegisterResponse::class)
+        val data = response.data
+
+        val response2 = post("/register", request, UserRegisterResponse::class)
+        userRepository.deleteById(data?.id!!)
+
+        assert(!response2.success)
+        assert(response2.errorCode == GeneralExceptionEnum.USERNAME_ALREADY_EXISTS.errorCode)
+    }
+
+    @Test
     fun registerAndLogin() {
         // register
         val md5 = MessageDigest.getInstance("MD5")

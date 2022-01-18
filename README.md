@@ -48,6 +48,7 @@ Request :
 {
   "token": "",
   "data": {
+    "password": "md5password",
     "username": "firzagustama",
     "email": "firzagustama@gmail.com",
     "phoneNumber": "081932874979",

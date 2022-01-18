@@ -51,6 +51,9 @@ class UserServiceImpl(
         paramNotNullOrBlank(request?.fullName, "fullName")
 
         request!!
+        val existingUser = repository.findByUsername(request.username)
+        if (existingUser != null) throwException(GeneralExceptionEnum.USERNAME_ALREADY_EXISTS)
+
         val user = User(
             password = request.password,
             username = request.username,
