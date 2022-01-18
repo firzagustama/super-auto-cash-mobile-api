@@ -19,7 +19,7 @@ class ControllerAdvisor: ResponseEntityExceptionHandler() {
             errorMessage = "${e.paramName} ${e.paramStatus}",
             data = null
         )
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @ExceptionHandler(value = [ApiException::class])
@@ -30,7 +30,7 @@ class ControllerAdvisor: ResponseEntityExceptionHandler() {
             errorMessage = e.exception.errorMessage,
             data = null
         )
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @ExceptionHandler(value = [Exception::class])
