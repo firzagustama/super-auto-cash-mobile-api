@@ -8,7 +8,9 @@ import id.superautocash.mobile.api.entity.User
 import id.superautocash.mobile.api.enums.GeneralExceptionEnum
 import id.superautocash.mobile.api.enums.RoleEnum
 import id.superautocash.mobile.api.repository.UserRepository
-import id.superautocash.mobile.api.utils.ExceptionUtils
+import id.superautocash.mobile.api.utils.paramNotNull
+import id.superautocash.mobile.api.utils.paramNotNullOrBlank
+import id.superautocash.mobile.api.utils.throwException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -18,15 +20,15 @@ class UserServiceImpl(
 ): UserService {
 
     override fun login(request: UserLoginRequest?): UserLoginResponse? {
-        ExceptionUtils.paramNotNull(request, "request")
-        ExceptionUtils.paramNotNullOrBlank(request?.username, "username")
-        ExceptionUtils.paramNotNullOrBlank(request?.password, "password")
+        paramNotNull(request, "request")
+        paramNotNullOrBlank(request?.username, "username")
+        paramNotNullOrBlank(request?.password, "password")
 
         request!!
         val user = repository.findByUsername(request.username)
         when {
-            user == null -> ExceptionUtils.throwException(GeneralExceptionEnum.USER_NOT_FOUND)
-            user.password != request.password -> ExceptionUtils.throwException(GeneralExceptionEnum.PASSWORD_INVALID)
+            user == null -> throwException(GeneralExceptionEnum.USER_NOT_FOUND)
+            user.password != request.password -> throwException(GeneralExceptionEnum.PASSWORD_INVALID)
         }
 
         return UserLoginResponse(
@@ -42,11 +44,11 @@ class UserServiceImpl(
 
     override fun register(request: UserRegisterRequest?): UserRegisterResponse? {
         // request parameter check
-        ExceptionUtils.paramNotNullOrBlank(request?.password, "password")
-        ExceptionUtils.paramNotNullOrBlank(request?.username, "username")
-        ExceptionUtils.paramNotNullOrBlank(request?.email, "email")
-        ExceptionUtils.paramNotNullOrBlank(request?.phoneNumber, "phoneNumber")
-        ExceptionUtils.paramNotNullOrBlank(request?.fullName, "fullName")
+        paramNotNullOrBlank(request?.password, "password")
+        paramNotNullOrBlank(request?.username, "username")
+        paramNotNullOrBlank(request?.email, "email")
+        paramNotNullOrBlank(request?.phoneNumber, "phoneNumber")
+        paramNotNullOrBlank(request?.fullName, "fullName")
 
         request!!
         val user = User(
