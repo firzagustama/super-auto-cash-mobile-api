@@ -24,11 +24,11 @@ class UserServiceImpl(
 
     override fun login(request: UserLoginRequest?): UserLoginResponse? {
         paramNotNull(request, "request")
-        paramNotNullOrBlank(request?.username, "username")
+        paramNotEitherBlank(request?.username, "username", request?.email, "email")
         paramNotNullOrBlank(request?.password, "password")
 
         request!!
-        val user = repository.findByUsername(request.username)
+        val user = repository.findByUsernameOrEmail(request.username, request.email)
         when {
             user == null -> throwException(GeneralExceptionEnum.USER_NOT_FOUND)
             user.password != request.password -> throwException(GeneralExceptionEnum.PASSWORD_INVALID)
