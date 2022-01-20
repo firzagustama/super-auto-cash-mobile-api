@@ -11,7 +11,7 @@ enum class GeneralExceptionEnum(
     PARAM_ILLEGAL("2001", "Param illegal"),
 
     /** USER EXCEPTION */
-    USER_NOT_FOUND("2002", "User not found"),
-    PASSWORD_INVALID("2003", "Password invalid"),
-    USERNAME_ALREADY_EXISTS("2004", "Username already exists"),
+    USER_NOT_FOUND("3002", "User not found"),
+    PASSWORD_INVALID("3003", "Password invalid"),
+    USERNAME_ALREADY_EXISTS("3004", "Username already exists"),
 }

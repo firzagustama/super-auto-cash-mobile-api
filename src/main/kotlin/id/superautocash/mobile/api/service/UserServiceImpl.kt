@@ -1,13 +1,16 @@
 package id.superautocash.mobile.api.service
 
+import id.superautocash.mobile.api.controller.request.UserExistsRequest
 import id.superautocash.mobile.api.controller.request.UserLoginRequest
 import id.superautocash.mobile.api.controller.request.UserRegisterRequest
+import id.superautocash.mobile.api.controller.response.UserExistsResponse
 import id.superautocash.mobile.api.controller.response.UserLoginResponse
 import id.superautocash.mobile.api.controller.response.UserRegisterResponse
 import id.superautocash.mobile.api.entity.User
 import id.superautocash.mobile.api.enums.GeneralExceptionEnum
 import id.superautocash.mobile.api.enums.RoleEnum
 import id.superautocash.mobile.api.repository.UserRepository
+import id.superautocash.mobile.api.utils.paramNotEitherBlank
 import id.superautocash.mobile.api.utils.paramNotNull
 import id.superautocash.mobile.api.utils.paramNotNullOrBlank
 import id.superautocash.mobile.api.utils.throwException
@@ -71,6 +74,17 @@ class UserServiceImpl(
             emailVerified = insertedUser.emailVerified,
             phoneNumber = insertedUser.phoneNumber,
             fullName = insertedUser.fullName
+        )
+    }
+
+    override fun userCheck(request: UserExistsRequest?): UserExistsResponse? {
+        paramNotNull(request, "request")
+        paramNotEitherBlank(request?.username, "username", request?.email, "email")
+
+        request!!
+        val user = repository.findByUsernameOrEmail(request.username, request.email)
+        return UserExistsResponse(
+            exists = user != null
         )
     }
 }

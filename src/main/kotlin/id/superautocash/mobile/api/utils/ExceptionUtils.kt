@@ -19,3 +19,9 @@ fun paramNotNullOrBlank(value: String?, paramName: String) {
         throw ParamIllegalException(paramName, "can't be null or blank")
     }
 }
+
+fun paramNotEitherBlank(value1: String?, paramName1: String, value2: String?, paramName2: String) {
+    if ((value1 == null || value1.isBlank()) && (value2 == null || value2.isBlank())) {
+        throw ParamIllegalException("$paramName1 and $paramName2", "must either not null or blank")
+    }
+}
