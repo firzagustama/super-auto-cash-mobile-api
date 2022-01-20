@@ -50,6 +50,8 @@ Failed :
 | `3004` | Username or Email already exists | Failed to register because user already exists |
 
 ## Login
+POST `/login`
+
 Request :
 
 | Parameter | Type | Description |
@@ -73,6 +75,8 @@ Response :
 ```
 
 ## Register
+POST `/register`
+
 Request :
 
 | Parameter | Type | Description |
