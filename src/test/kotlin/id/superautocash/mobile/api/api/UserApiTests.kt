@@ -1,7 +1,9 @@
 package id.superautocash.mobile.api.api
 
+import id.superautocash.mobile.api.controller.request.UserExistsRequest
 import id.superautocash.mobile.api.controller.request.UserLoginRequest
 import id.superautocash.mobile.api.controller.request.UserRegisterRequest
+import id.superautocash.mobile.api.controller.response.UserExistsResponse
 import id.superautocash.mobile.api.controller.response.UserLoginResponse
 import id.superautocash.mobile.api.controller.response.UserRegisterResponse
 import id.superautocash.mobile.api.enums.GeneralExceptionEnum
@@ -17,7 +19,7 @@ class UserApiTests: BaseApiTests() {
     lateinit var userRepository: UserRepository
 
     @Test
-    fun login() {
+    fun login_userNotFound() {
         val request = UserLoginRequest("username", "pwd")
         val response = post("/login", request, UserLoginResponse::class)
         assert(!response.success)
@@ -91,5 +93,44 @@ class UserApiTests: BaseApiTests() {
 
         // remove registered test user
         userRepository.deleteById(registerResponse.data?.id!!)
+    }
+
+    @Test
+    fun userCheck_exists() {
+        // register
+        val registerRequest = UserRegisterRequest(
+            password = "1234!@#$",
+            username = "firzagustama",
+            email = "firza.gustama@gmail.com",
+            phoneNumber = "08192384719",
+            fullName = "Muhammad Firza Gustama"
+        )
+        val registerResponse = post("/register", registerRequest, UserRegisterResponse::class)
+
+        // check by username
+        val requestUsername = UserExistsRequest(username = "firzagustama")
+        val responseUsername = post("/user/check", requestUsername, UserExistsResponse::class)
+
+        assert(responseUsername.success)
+        assert(responseUsername.data?.exists == true)
+
+        // check by email
+        val requestEmail = UserExistsRequest(email = "firza.gustama@gmail.com")
+        val responseEmail = post("/user/check", requestEmail, UserExistsResponse::class)
+
+        assert(responseEmail.success)
+        assert(responseEmail.data?.exists == true)
+
+        // delete registered user
+        userRepository.deleteById(registerResponse.data?.id!!)
+    }
+
+    @Test
+    fun userCheck_notExists() {
+        val request = UserExistsRequest("testingtesting")
+        val response = post("/user/check", request, UserExistsResponse::class)
+
+        assert(response.success)
+        assert(response.data?.exists == false)
     }
 }
