@@ -51,75 +51,49 @@ Failed :
 
 ## Login
 Request :
-- Method : POST
-- URL : `/login`
-- Header :
-    - Content-Type : application/json
-    - Accept : application/json
-- Body : 
-```json
-{
-  "token": "",
-  "data": {
-    "username": "firzagustama",
-    "password": "md5password"
-  }
-}
-```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| username | String | `Conditional` not either blank with `email` |
+| email | String | `Conditional` not either blank with `username` |
+| password | String | `Required` md5 hashed |
 
 Response :
 ```json
 {
-  "success": true,
-  "errorCode": null,
-  "errorMessage": null,
-  "data": {
     "id": "32",
     "roleId": "1",
     "username": "firzagustama",
     "email": "firzagustama@gmail.com",
     "emailVerified": false,
     "phoneNumber": "081932874979",
-    "fullName": "Muhammad Firza Gustama"
-  }
+    "fullName": "Muhammad Firza Gustama",
+    "token" : "authorization_token"
 }
 ```
 
 ## Register
 Request :
-- Method : POST
-- URL : `/register`
-- Header :
-    - Content-Type : application/json
-    - Accept : application/json
-- Body : 
-```json
-{
-  "token": "",
-  "data": {
-    "password": "md5password",
-    "username": "firzagustama",
-    "email": "firzagustama@gmail.com",
-    "phoneNumber": "081932874979",
-    "fullName": "Muhammad Firza Gustama"
-  }
-}
-```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| username | String | `Required` |
+| email | String | `Required` |
+| phoneNumber | String | `Required` must be started with `+62` |
+| fullName | String | `Required` |
+| password | String | `Required` md5 hashed |
+
 Response :
 ```json
 {
-  "success": true,
-  "errorCode": null,
-  "errorMessage": null,
-  "data": {
     "id": "generated id",
     "roleId": "1",
     "username": "firzagustama",
     "email": "firzagustama@gmail.com",
     "emailVerified": false,
     "phoneNumber": "081932874979",
-    "fullName": "Muhammad Firza Gustama"
-  }
+    "fullName": "Muhammad Firza Gustama",
+    "token": "authorization_token"
 }
 ```
 
