@@ -20,7 +20,7 @@ class UserApiTests: BaseApiTests() {
 
     @Test
     fun login_userNotFound() {
-        val request = UserLoginRequest("username", "pwd")
+        val request = UserLoginRequest("username", password = "pwd")
         val response = post("/login", request, UserLoginResponse::class)
         assert(!response.success)
         assert(response.errorCode == GeneralExceptionEnum.USER_NOT_FOUND.errorCode)
@@ -81,15 +81,25 @@ class UserApiTests: BaseApiTests() {
         assert(registerResponse.success)
         assert(registerResponse.data?.id != null)
 
-        // login
-        val loginRequest = UserLoginRequest(
+        // login with username
+        val loginUsernameRequest = UserLoginRequest(
             username = registerResponse.data?.username ?: "",
             password = password
         )
-        val loginResponse = post("/login", loginRequest, UserLoginResponse::class)
+        val loginUsernameResponse = post("/login", loginUsernameRequest, UserLoginResponse::class)
 
-        assert(loginResponse.success)
-        assert(loginResponse.data?.id != null)
+        assert(loginUsernameResponse.success)
+        assert(loginUsernameResponse.data?.id != null)
+
+        // login with email
+        val loginEmailRequest = UserLoginRequest(
+            email = registerResponse.data?.email ?: "",
+            password = password
+        )
+        val loginEmailResponse = post("/login", loginEmailRequest, UserLoginResponse::class)
+
+        assert(loginEmailResponse.success)
+        assert(loginEmailResponse.data?.id != null)
 
         // remove registered test user
         userRepository.deleteById(registerResponse.data?.id!!)
