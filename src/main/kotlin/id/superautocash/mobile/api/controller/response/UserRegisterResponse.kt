@@ -7,5 +7,6 @@ data class UserRegisterResponse(
     var email: String?,
     var emailVerified: Boolean?,
     var phoneNumber: String?,
-    var fullName: String?
+    var fullName: String?,
+    var token: String = ""
 ): BaseResponse()

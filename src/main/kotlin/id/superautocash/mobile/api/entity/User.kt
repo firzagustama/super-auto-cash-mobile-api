@@ -1,5 +1,7 @@
 package id.superautocash.mobile.api.entity
 
+import com.google.gson.annotations.Expose
+import id.superautocash.mobile.api.utils.annotation.Exclude
 import javax.persistence.*
 
 @Entity(name = "user")
@@ -9,6 +11,7 @@ data class User(
     @Column(name = "id")
     var id: Int? = null,
 
+    @Exclude
     @Column(name = "password")
     var password: String,
 

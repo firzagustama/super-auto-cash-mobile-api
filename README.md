@@ -6,12 +6,13 @@ All the `Request` must be wrapped with :
 - Header :
     - Content-Type : application/json
     - Accept : application/json
+    - Authorization : Bearer TOKEN
 - Body
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| token | String | `Optional` authorization key |
 | data | Object | `Required` request data that will be detailed in each endpoint |
+| extParams | Map | `Optional` additional data needed by client 
 
 All the `Response` will be wrapped with :
 
@@ -21,7 +22,8 @@ Success :
   "success" : true,
   "errorCode": null,
   "errorMessage": null,
-  "data": {}
+  "data": {},
+  "extParams": {}
 }
 ```
 
@@ -31,7 +33,8 @@ Failed :
   "success" : false,
   "errorCode": 3004,
   "errorMessage": "Username or Email already exists",
-  "data" : null
+  "data" : null,
+  "extParams": {}
 }
 ```
 
@@ -45,6 +48,7 @@ Failed :
 | --- | --- | --- |
 | `1001` | Server error, please check api logs | There are error in server side |
 | `2001` | Param illegal | Wrong request data from client side
+| `2002` | Unauthorized | This user is not authorized
 | `3002` | User not found | User not found when login |
 | `3003` | Password invalid | Wrong password when login |
 | `3004` | Username or Email already exists | Failed to register because user already exists |
@@ -115,5 +119,21 @@ Response :
 ```json
 {
   "exists": true
+}
+```
+
+## Auth Check
+POST `/auth/check`
+
+Check for Authorization token is valid or not
+
+Request :
+ 
+| Parameter | Type | Description |
+| --- | --- | --- |
+
+Response :
+```json
+{
 }
 ```
