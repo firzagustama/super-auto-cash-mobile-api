@@ -9,6 +9,7 @@ enum class GeneralExceptionEnum(
 
     /** CLIENT EXCEPTION */
     PARAM_ILLEGAL("2001", "Param illegal"),
+    UNAUTHORIZED("2002", "This user is not authorized"),
 
     /** USER EXCEPTION */
     USER_NOT_FOUND("3002", "User not found"),

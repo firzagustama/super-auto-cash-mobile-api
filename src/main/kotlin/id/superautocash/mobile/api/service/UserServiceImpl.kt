@@ -9,17 +9,23 @@ import id.superautocash.mobile.api.controller.response.UserRegisterResponse
 import id.superautocash.mobile.api.entity.User
 import id.superautocash.mobile.api.enums.GeneralExceptionEnum
 import id.superautocash.mobile.api.enums.RoleEnum
+import id.superautocash.mobile.api.exception.ApiException
 import id.superautocash.mobile.api.repository.UserRepository
+import id.superautocash.mobile.api.security.entity.UserDetailsSecurity
+import id.superautocash.mobile.api.security.jwt.JwtUtils
 import id.superautocash.mobile.api.utils.paramNotEitherBlank
 import id.superautocash.mobile.api.utils.paramNotNull
 import id.superautocash.mobile.api.utils.paramNotNullOrBlank
-import id.superautocash.mobile.api.utils.throwException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
 
 @Service
-class UserServiceImpl(
-    @Autowired val repository: UserRepository
+class UserServiceImpl @Autowired constructor(
+    val repository: UserRepository,
+    val authenticationManager: AuthenticationManager,
+    val jwtUtils: JwtUtils
 ): UserService {
 
     override fun login(request: UserLoginRequest?): UserLoginResponse? {
@@ -28,20 +34,19 @@ class UserServiceImpl(
         paramNotNullOrBlank(request?.password, "password")
 
         request!!
-        val user = repository.findByUsernameOrEmail(request.username, request.email)
-        when {
-            user == null -> throwException(GeneralExceptionEnum.USER_NOT_FOUND)
-            user.password != request.password -> throwException(GeneralExceptionEnum.PASSWORD_INVALID)
-        }
+        val username = if (request.username.isNullOrBlank()) request.email else request.username
 
+        val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, request.password))
+        val user = (auth.principal as UserDetailsSecurity).user
         return UserLoginResponse(
-            id = user?.id,
-            roleId = user?.roleId,
-            username = user?.username,
-            email = user?.email,
-            emailVerified = user?.emailVerified ?: false,
-            phoneNumber = user?.phoneNumber,
-            fullName = user?.fullName
+            id = user.id,
+            roleId = user.roleId,
+            username = user.username,
+            email = user.email,
+            emailVerified = user.emailVerified ?: false,
+            phoneNumber = user.phoneNumber,
+            fullName = user.fullName,
+            token = jwtUtils.generateToken(auth)
         )
     }
 
@@ -54,18 +59,23 @@ class UserServiceImpl(
         paramNotNullOrBlank(request?.fullName, "fullName")
 
         request!!
-        val existingUser = repository.findByUsername(request.username)
-        if (existingUser != null) throwException(GeneralExceptionEnum.USERNAME_ALREADY_EXISTS)
 
-        val user = User(
+        // check if exists, if not insert user
+        repository.findByUsername(request.username)?.let { throw ApiException(GeneralExceptionEnum.USERNAME_ALREADY_EXISTS) }
+        val insertedUser = repository.save(User(
             password = request.password,
             username = request.username,
             email = request.email,
             phoneNumber = request.phoneNumber,
             fullName = request.fullName,
             roleId = RoleEnum.USER.id
-        )
-        val insertedUser = repository.save(user)
+        ))
+
+        // authenticate user
+        val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(request.username, request.password))
+        val token = jwtUtils.generateToken(auth)
+
+        // generate response
         return UserRegisterResponse(
             id = insertedUser.id,
             roleId = insertedUser.roleId,
@@ -73,7 +83,8 @@ class UserServiceImpl(
             email = insertedUser.email,
             emailVerified = insertedUser.emailVerified,
             phoneNumber = insertedUser.phoneNumber,
-            fullName = insertedUser.fullName
+            fullName = insertedUser.fullName,
+            token = token
         )
     }
 
