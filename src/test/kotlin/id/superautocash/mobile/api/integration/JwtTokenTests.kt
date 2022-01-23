@@ -1,6 +1,5 @@
-package id.superautocash.mobile.api.security
+package id.superautocash.mobile.api.integration
 
-import id.superautocash.mobile.api.api.BaseApiTests
 import id.superautocash.mobile.api.controller.request.ApiRequest
 import id.superautocash.mobile.api.controller.response.BaseResponse
 import id.superautocash.mobile.api.entity.User
