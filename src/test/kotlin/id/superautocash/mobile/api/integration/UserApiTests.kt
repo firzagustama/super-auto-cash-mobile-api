@@ -1,4 +1,4 @@
-package id.superautocash.mobile.api.api
+package id.superautocash.mobile.api.integration
 
 import id.superautocash.mobile.api.controller.request.UserExistsRequest
 import id.superautocash.mobile.api.controller.request.UserLoginRequest
