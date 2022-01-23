@@ -53,8 +53,10 @@ Failed :
 | `3003` | Password invalid | Wrong password when login |
 | `3004` | Username or Email already exists | Failed to register because user already exists |
 
-## Login
-POST `/login`
+## User Login
+POST `/user/login`
+
+User login
 
 Request :
 
@@ -78,8 +80,10 @@ Response :
 }
 ```
 
-## Register
-POST `/register`
+## User Register
+POST `/user/register`
+
+User Register
 
 Request :
 

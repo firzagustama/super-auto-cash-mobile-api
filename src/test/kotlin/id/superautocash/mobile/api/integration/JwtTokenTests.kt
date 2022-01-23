@@ -60,11 +60,10 @@ class JwtTokenTests: BaseApiTests() {
         val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(testUser.username, testUser.password))
         val token = "Bearer ${jwtUtils.generateToken(auth)}"
 
-
+        clearHeader()
         addHeader("Authorization", token)
         val request = ApiRequest<Nothing>()
         val response = post("/auth/check", request, BaseResponse::class)
-        clearHeader()
 
         assert(response.success)
     }
@@ -74,10 +73,10 @@ class JwtTokenTests: BaseApiTests() {
         val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(testUser.username, testUser.password))
         val token = "Bearer ${generateExpiredToken(auth)}"
 
+        clearHeader()
         addHeader("Authorization", token)
         val request = ApiRequest<Nothing>()
         val response = post("/auth/check", request, BaseResponse::class)
-        clearHeader()
 
         assert(!response.success)
     }

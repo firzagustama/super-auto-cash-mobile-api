@@ -30,7 +30,7 @@ class UserApiTests: BaseApiTests() {
     @Test
     fun login_userNotFound() {
         val request = UserLoginRequest("username", password = "pwd")
-        val response = post("/login", request, UserLoginResponse::class)
+        val response = post("/user/login", request, UserLoginResponse::class)
         assert(!response.success)
         assert(response.errorCode == GeneralExceptionEnum.USER_NOT_FOUND.errorCode)
     }
@@ -48,7 +48,7 @@ class UserApiTests: BaseApiTests() {
         ))
 
         val request = UserLoginRequest(username = "firzagustama", password = "12345")
-        val response = post("/login", request, UserLoginResponse::class)
+        val response = post("/user/login", request, UserLoginResponse::class)
 
         userRepository.delete(user)
 
@@ -66,7 +66,7 @@ class UserApiTests: BaseApiTests() {
             phoneNumber = "08192384719",
             fullName = "Muhammad Firza Gustama"
         )
-        val response = post("/register", request, UserRegisterResponse::class)
+        val response = post("/user/register", request, UserRegisterResponse::class)
         val data = response.data
         userRepository.deleteById(data?.id!!)
 
@@ -85,10 +85,10 @@ class UserApiTests: BaseApiTests() {
             phoneNumber = "08192384719",
             fullName = "Muhammad Firza Gustama"
         )
-        val response = post("/register", request, UserRegisterResponse::class)
+        val response = post("/user/register", request, UserRegisterResponse::class)
         val data = response.data
 
-        val response2 = post("/register", request, UserRegisterResponse::class)
+        val response2 = post("/user/register", request, UserRegisterResponse::class)
         userRepository.deleteById(data?.id!!)
 
         assert(!response2.success)
@@ -107,7 +107,7 @@ class UserApiTests: BaseApiTests() {
             phoneNumber = "08192384719",
             fullName = "Muhammad Firza Gustama"
         )
-        val registerResponse = post("/register", registerRequest, UserRegisterResponse::class)
+        val registerResponse = post("/user/register", registerRequest, UserRegisterResponse::class)
 
         assert(registerResponse.success)
         assert(registerResponse.data?.id != null)
@@ -118,7 +118,7 @@ class UserApiTests: BaseApiTests() {
             username = registerResponse.data?.username ?: "",
             password = password
         )
-        val loginUsernameResponse = post("/login", loginUsernameRequest, UserLoginResponse::class)
+        val loginUsernameResponse = post("/user/login", loginUsernameRequest, UserLoginResponse::class)
 
         assert(loginUsernameResponse.success)
         assert(loginUsernameResponse.data?.id != null)
@@ -129,7 +129,7 @@ class UserApiTests: BaseApiTests() {
             email = registerResponse.data?.email ?: "",
             password = password
         )
-        val loginEmailResponse = post("/login", loginEmailRequest, UserLoginResponse::class)
+        val loginEmailResponse = post("/user/login", loginEmailRequest, UserLoginResponse::class)
 
         assert(loginEmailResponse.success)
         assert(loginEmailResponse.data?.id != null)
@@ -149,7 +149,7 @@ class UserApiTests: BaseApiTests() {
             phoneNumber = "08192384719",
             fullName = "Muhammad Firza Gustama"
         )
-        val registerResponse = post("/register", registerRequest, UserRegisterResponse::class)
+        val registerResponse = post("/user/register", registerRequest, UserRegisterResponse::class)
 
         // check by username
         val requestUsername = UserExistsRequest(username = "firzagustama")
