@@ -1,1 +1,1 @@
-INSERT INTO user_role(`role_name`) VALUES ('USER')
+INSERT INTO user_role(`role_name`) VALUES ('USER'), ('MERCHANT')
