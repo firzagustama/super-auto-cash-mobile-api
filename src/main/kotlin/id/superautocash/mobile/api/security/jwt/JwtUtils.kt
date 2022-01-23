@@ -39,13 +39,13 @@ class JwtUtils {
         return Gson().fromJson(userJson, UserDetailsSecurity::class.java)
     }
 
-    fun validateToken(token: String, request: HttpServletRequest): Boolean {
+    fun validateToken(token: String, request: HttpServletRequest? = null): Boolean {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
             return true
         } catch (e: ExpiredJwtException) {
             logger.info("Expired JWT Token")
-            request.setAttribute("expired", e.message)
+            request?.setAttribute("expired", e.message)
         }
         return false
     }

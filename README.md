@@ -53,8 +53,10 @@ Failed :
 | `3003` | Password invalid | Wrong password when login |
 | `3004` | Username or Email already exists | Failed to register because user already exists |
 
-## Login
-POST `/login`
+## User Login
+POST `/user/login`
+
+User login
 
 Request :
 
@@ -78,8 +80,10 @@ Response :
 }
 ```
 
-## Register
-POST `/register`
+## User Register
+POST `/user/register`
+
+User Register
 
 Request :
 
@@ -122,12 +126,51 @@ Response :
 }
 ```
 
+## Merchant Login
+POST `/merchant/login`
+
+Request :
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| username | String | `Conditional` not either blank with `email` |
+| email | String | `Conditional` not either blank with `username` |
+| password | String | `Required` md5 hashed |
+
+Response :
+```json
+{
+  "token": "auth_token"
+}
+```
+
+## Merchant Register
+POST `/merchant/register`
+
+Request :
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| username | String | `Required` |
+| email | String | `Required` |
+| password | String | `Required` md5 hashed |
+| phoneNumber | String | `Required` starts with `+62` |
+| fullName | String | `Required` |
+| address | String | `Optional` merchant address |
+
+Response :
+```json
+{
+  "token": "auth_token"
+}
+```
+
 ## Auth Check
 POST `/auth/check`
 
 Check for Authorization token is valid or not
 
-Request :
+Request : `token User or Merchant required`
  
 | Parameter | Type | Description |
 | --- | --- | --- |

@@ -1,7 +1,8 @@
 package id.superautocash.mobile.api.entity
 
-import com.google.gson.annotations.Expose
 import id.superautocash.mobile.api.utils.annotation.Exclude
+import java.sql.Timestamp
+import java.util.*
 import javax.persistence.*
 
 @Entity(name = "user")
@@ -31,5 +32,20 @@ data class User(
     var phoneNumber: String,
 
     @Column(name = "full_name")
-    var fullName: String
+    var fullName: String,
+
+    @Column(name = "address")
+    var address: String? = "",
+
+    @Column(name = "registered_date")
+    var registeredDate: Timestamp = Timestamp(Date().time),
+
+    @Column(name = "subscription_id")
+    var subscriptionId: Int? = null,
+
+    @Column(name = "subscription_date")
+    var subscriptionDate: Timestamp? = null,
+
+    @Column(name = "subscription_expiry_date")
+    var subscriptionExpiryDate: Timestamp? = null
 ) : BaseEntity()

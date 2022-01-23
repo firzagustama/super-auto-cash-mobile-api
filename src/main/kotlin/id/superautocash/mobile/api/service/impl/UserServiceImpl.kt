@@ -1,4 +1,4 @@
-package id.superautocash.mobile.api.service
+package id.superautocash.mobile.api.service.impl
 
 import id.superautocash.mobile.api.controller.request.UserExistsRequest
 import id.superautocash.mobile.api.controller.request.UserLoginRequest
@@ -13,9 +13,11 @@ import id.superautocash.mobile.api.exception.ApiException
 import id.superautocash.mobile.api.repository.UserRepository
 import id.superautocash.mobile.api.security.entity.UserDetailsSecurity
 import id.superautocash.mobile.api.security.jwt.JwtUtils
+import id.superautocash.mobile.api.service.UserService
 import id.superautocash.mobile.api.utils.paramNotEitherBlank
 import id.superautocash.mobile.api.utils.paramNotNull
 import id.superautocash.mobile.api.utils.paramNotNullOrBlank
+import id.superautocash.mobile.api.utils.throwException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -38,6 +40,7 @@ class UserServiceImpl @Autowired constructor(
 
         val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, request.password))
         val user = (auth.principal as UserDetailsSecurity).user
+        if (user.roleId != RoleEnum.USER.id) throwException(GeneralExceptionEnum.USER_NOT_FOUND)
         return UserLoginResponse(
             id = user.id,
             roleId = user.roleId,
