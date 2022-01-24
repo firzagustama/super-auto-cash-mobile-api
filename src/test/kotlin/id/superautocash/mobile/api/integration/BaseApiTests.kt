@@ -34,6 +34,16 @@ class BaseApiTests: ApplicationTests() {
         headers.add("Accept", "application/json")
     }
 
+    fun <T: BaseResponse> get(url: String, responseClass: KClass<T>): ApiResponse<T> {
+        val responseJson = mockMvc.perform(MockMvcRequestBuilders
+            .get(url)
+            .headers(this.headers)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andReturn().response.contentAsString
+        return Gson().fromJson(responseJson, TypeToken.getParameterized(ApiResponse::class.java, responseClass.java).type)
+    }
+
     fun <T: BaseResponse> post(url: String, request: BaseRequest, responseClass: KClass<T>): ApiResponse<T> {
         val responseJson = mockMvc.perform(MockMvcRequestBuilders
             .post(url)
