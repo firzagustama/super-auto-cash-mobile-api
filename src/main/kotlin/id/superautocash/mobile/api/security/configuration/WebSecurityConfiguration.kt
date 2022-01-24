@@ -52,7 +52,8 @@ class WebSecurityConfiguration: WebSecurityConfigurerAdapter() {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers(
                 "/menu/create",
-                "/menu/update"
+                "/menu/update",
+                "/menu/delete/{\\d+}"
             ).hasAuthority("2").and()
             .authorizeRequests().antMatchers(
                 "/user/login",

@@ -16,4 +16,6 @@ interface MenuService {
 
     fun update(request: UpdateMenuRequest?): GetMenuResponse
 
+    fun delete(menuId: Int)
+
 }

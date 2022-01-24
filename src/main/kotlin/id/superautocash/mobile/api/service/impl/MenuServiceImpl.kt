@@ -97,4 +97,15 @@ class MenuServiceImpl @Autowired constructor(
             menu = menu.toMenuModel()
         )
     }
+
+    override fun delete(menuId: Int) {
+        // check if menu exists
+        val menu = repository.findById(menuId).orElseThrow {
+            throw ApiException(GeneralExceptionEnum.MENU_NOT_FOUND)
+        }
+        // check if logged in user has the menu
+        if (menu.merchantId != getLoggedInUserId()) throwException(GeneralExceptionEnum.FORBIDDEN)
+        // delete menu
+        repository.deleteById(menuId)
+    }
 }
