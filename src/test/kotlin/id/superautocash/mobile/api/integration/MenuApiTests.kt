@@ -2,6 +2,7 @@ package id.superautocash.mobile.api.integration
 
 import id.superautocash.mobile.api.controller.request.CreateMenuRequest
 import id.superautocash.mobile.api.controller.request.UpdateMenuRequest
+import id.superautocash.mobile.api.controller.response.BaseResponse
 import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
 import id.superautocash.mobile.api.controller.response.GetMenuResponse
@@ -86,6 +87,12 @@ class MenuApiTests @Autowired constructor(
                 merchantId = merchantUser.id!!,
                 imageUrl = "https://awsimages.detik.net.id/community/media/visual/2020/12/08/food-cour-jakarta-utara-1.jpeg?w=539",
                 name = "Ayam yummy",
+                price = 20000
+            ),
+            Menu(
+                merchantId = merchantUser.id!!,
+                imageUrl = "https://awsimages.detik.net.id/community/media/visual/2020/12/08/food-cour-jakarta-utara-1.jpeg?w=539",
+                name = "Ayam bakal dihapus",
                 price = 20000
             )
         )
@@ -233,5 +240,42 @@ class MenuApiTests @Autowired constructor(
         Assert.notNull(response.data!!.menu)
         Assert.isTrue(response.data!!.menu.name == request.name)
         Assert.isTrue(response.data!!.menu.updatedDate != response.data!!.menu.createdDate)
+    }
+
+    @Test
+    fun delete_forbidden() {
+        useValidToken(testUser)
+        val response = get("/menu/delete/0", BaseResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.FORBIDDEN.errorCode)
+    }
+
+    @Test
+    fun delete_notFound() {
+        useValidToken(merchantUser)
+        val response = get("/menu/delete/0", BaseResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.MENU_NOT_FOUND.errorCode)
+    }
+
+    @Test
+    fun delete_merchantIllegal() {
+        useValidToken(illegalMerchantUser)
+        val response = get("/menu/delete/${menus[0].id}", BaseResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.FORBIDDEN.errorCode)
+        Assert.notNull(repository.findById(menus[0].id!!))
+    }
+
+    @Test
+    fun delete_success() {
+        useValidToken(merchantUser)
+        val response = get("/menu/delete/${menus[5].id}", BaseResponse::class)
+
+        Assert.isTrue(response.success)
+        Assert.isTrue(!repository.findById(menus[5].id!!).isPresent)
     }
 }

@@ -64,4 +64,16 @@ class MenuController @Autowired constructor(
             data = service.update(request.data)
         )
     }
+
+    @GetMapping(
+        value = ["/delete/{id}"],
+        produces = ["application/json"],
+        consumes = ["application/json"]
+    )
+    fun delete(@PathVariable(name = "id") menuId: Int): ApiResponse<Unit> {
+        return ApiResponse(
+            success = true,
+            data = service.delete(menuId)
+        )
+    }
 }
