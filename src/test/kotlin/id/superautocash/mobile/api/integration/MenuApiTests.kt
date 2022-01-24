@@ -243,6 +243,15 @@ class MenuApiTests @Autowired constructor(
     }
 
     @Test
+    fun delete_forbidden() {
+        useValidToken(testUser)
+        val response = get("/menu/delete/0", BaseResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.FORBIDDEN.errorCode)
+    }
+
+    @Test
     fun delete_notFound() {
         useValidToken(merchantUser)
         val response = get("/menu/delete/0", BaseResponse::class)
