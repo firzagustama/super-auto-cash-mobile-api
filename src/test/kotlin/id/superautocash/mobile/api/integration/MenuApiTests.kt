@@ -1,6 +1,7 @@
 package id.superautocash.mobile.api.integration
 
 import id.superautocash.mobile.api.controller.request.CreateMenuRequest
+import id.superautocash.mobile.api.controller.request.UpdateMenuRequest
 import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
 import id.superautocash.mobile.api.controller.response.GetMenuResponse
@@ -22,6 +23,7 @@ class MenuApiTests @Autowired constructor(
 
     lateinit var testUser: User
     lateinit var merchantUser: User
+    lateinit var illegalMerchantUser: User
     lateinit var menus: List<Menu>
 
     @BeforeEach
@@ -46,6 +48,14 @@ class MenuApiTests @Autowired constructor(
             email = "merchant.menu@gmail.com",
             phoneNumber = "081938758372",
             fullName = "Merchant Menu",
+        ))
+        illegalMerchantUser = userRepository.save(User(
+            password = "1234!@#$",
+            roleId = RoleEnum.MERCHANT.id,
+            username = "illegal_merchant_menu_test",
+            email = "illegal_merchant.menu@gmail.com",
+            phoneNumber = "081938758372",
+            fullName = "Illegal Merchant Menu",
         ))
         menus = listOf(
             Menu(
@@ -84,7 +94,7 @@ class MenuApiTests @Autowired constructor(
 
     @AfterAll
     fun deleteTestItem() {
-        userRepository.deleteAll(arrayListOf(testUser, merchantUser))
+        userRepository.deleteAll(arrayListOf(testUser, merchantUser, illegalMerchantUser))
         repository.deleteAll(menus)
     }
 
@@ -172,5 +182,56 @@ class MenuApiTests @Autowired constructor(
         Assert.notNull(response.data!!.id)
 
         repository.deleteById(response.data!!.id)
+    }
+
+    @Test
+    fun update_notFound() {
+        useValidToken(merchantUser)
+        val request = UpdateMenuRequest(
+            id = 0,
+            name = menus[0].name,
+            imageUrl = menus[0].imageUrl,
+            price = menus[0].price,
+            description = menus[0].description
+        )
+        val response = post("/menu/update", request, GetMenuResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.MENU_NOT_FOUND.errorCode)
+    }
+
+    @Test
+    fun update_merchantIllegal() {
+        useValidToken(illegalMerchantUser)
+        val request = UpdateMenuRequest(
+            id = menus[0].id,
+            name = menus[0].name,
+            imageUrl = menus[0].imageUrl,
+            price = menus[0].price,
+            description = menus[0].description
+        )
+        val response = post("/menu/update", request, GetMenuResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.FORBIDDEN.errorCode)
+    }
+
+    @Test
+    fun update_success() {
+        useValidToken(merchantUser)
+        val request = UpdateMenuRequest(
+            id = menus[0].id,
+            name = "Ayam goreng update",
+            imageUrl = menus[0].imageUrl,
+            price = menus[0].price,
+            description = menus[0].description
+        )
+        val response = post("/menu/update", request, GetMenuResponse::class)
+
+        Assert.isTrue(response.success)
+        Assert.notNull(response.data)
+        Assert.notNull(response.data!!.menu)
+        Assert.isTrue(response.data!!.menu.name == request.name)
+        Assert.isTrue(response.data!!.menu.updatedDate != response.data!!.menu.createdDate)
     }
 }

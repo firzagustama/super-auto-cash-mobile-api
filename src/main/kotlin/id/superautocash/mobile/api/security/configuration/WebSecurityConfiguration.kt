@@ -51,7 +51,8 @@ class WebSecurityConfiguration: WebSecurityConfigurerAdapter() {
             .exceptionHandling().accessDeniedHandler(forbiddenHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers(
-                "/menu/create"
+                "/menu/create",
+                "/menu/update"
             ).hasAuthority("2").and()
             .authorizeRequests().antMatchers(
                 "/user/login",
