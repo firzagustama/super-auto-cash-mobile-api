@@ -5,9 +5,9 @@ import id.superautocash.mobile.api.controller.request.CreateMenuRequest
 import id.superautocash.mobile.api.controller.response.ApiResponse
 import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
+import id.superautocash.mobile.api.controller.response.GetMenuResponse
 import id.superautocash.mobile.api.service.MenuService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,6 +15,18 @@ import org.springframework.web.bind.annotation.*
 class MenuController @Autowired constructor(
     val service: MenuService
 ) {
+
+    @GetMapping(
+        value = ["/detail/{id}"],
+        produces = ["application/json"],
+        consumes = ["application/json"]
+    )
+    fun get(@PathVariable(name = "id") menuId: Int): ApiResponse<GetMenuResponse> {
+        return ApiResponse(
+            success = true,
+            data = service.get(menuId)
+        )
+    }
 
     @GetMapping(
         value = ["/{id}"],

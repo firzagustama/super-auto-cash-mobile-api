@@ -59,7 +59,8 @@ class WebSecurityConfiguration: WebSecurityConfigurerAdapter() {
                 "/user/check",
                 "/merchant/login",
                 "/merchant/register",
-                "/menu/{\\d+}"
+                "/menu/{\\d+}",
+                "/menu/detail/{\\d+}"
             )
             .permitAll()
             .anyRequest().authenticated()

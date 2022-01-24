@@ -3,6 +3,7 @@ package id.superautocash.mobile.api.integration
 import id.superautocash.mobile.api.controller.request.CreateMenuRequest
 import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
+import id.superautocash.mobile.api.controller.response.GetMenuResponse
 import id.superautocash.mobile.api.entity.Menu
 import id.superautocash.mobile.api.entity.User
 import id.superautocash.mobile.api.enums.GeneralExceptionEnum
@@ -85,6 +86,23 @@ class MenuApiTests @Autowired constructor(
     fun deleteTestItem() {
         userRepository.deleteAll(arrayListOf(testUser, merchantUser))
         repository.deleteAll(menus)
+    }
+
+    @Test
+    fun getMenu_notFound() {
+        val response = get("/menu/detail/0", GetMenuResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.MENU_NOT_FOUND.errorCode)
+    }
+
+    @Test
+    fun getMenu_found() {
+        val response = get("/menu/detail/${menus[0].id}", GetMenuResponse::class)
+
+        Assert.isTrue(response.success)
+        Assert.notNull(response.data)
+        Assert.notNull(response.data!!.menu.id)
     }
 
     @Test
