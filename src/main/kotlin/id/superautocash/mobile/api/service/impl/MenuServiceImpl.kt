@@ -4,6 +4,9 @@ import id.superautocash.mobile.api.controller.model.PaginationInfo
 import id.superautocash.mobile.api.controller.request.CreateMenuRequest
 import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
+import id.superautocash.mobile.api.controller.response.GetMenuResponse
+import id.superautocash.mobile.api.enums.GeneralExceptionEnum
+import id.superautocash.mobile.api.exception.ApiException
 import id.superautocash.mobile.api.repository.MenuRepository
 import id.superautocash.mobile.api.security.entity.UserDetailsSecurity
 import id.superautocash.mobile.api.service.MenuService
@@ -20,6 +23,13 @@ import org.springframework.stereotype.Service
 class MenuServiceImpl @Autowired constructor(
     val repository: MenuRepository
 ): MenuService {
+
+    override fun get(menuId: Int): GetMenuResponse {
+        val menu = repository.findById(menuId)
+            .orElseThrow { ApiException(GeneralExceptionEnum.MENU_NOT_FOUND) }
+            .toMenuModel()
+        return GetMenuResponse(menu)
+    }
 
     override fun getAll(page: Int?, size: Int?, merchantId: Int): GetAllMenuResponse {
         // param check
