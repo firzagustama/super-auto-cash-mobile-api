@@ -14,6 +14,12 @@ fun paramNotNull(value: Any?, paramName: String) {
     }
 }
 
+fun paramIsTrue(value: Boolean, paramName: String, message: String) {
+    if (!value) {
+        throw ParamIllegalException(paramName, message)
+    }
+}
+
 fun paramNotNullOrBlank(value: String?, paramName: String) {
     if (value == null || value.isBlank()) {
         throw ParamIllegalException(paramName, "can't be null or blank")

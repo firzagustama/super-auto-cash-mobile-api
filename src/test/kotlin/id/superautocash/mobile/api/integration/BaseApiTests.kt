@@ -7,9 +7,13 @@ import id.superautocash.mobile.api.controller.request.ApiRequest
 import id.superautocash.mobile.api.controller.request.BaseRequest
 import id.superautocash.mobile.api.controller.response.ApiResponse
 import id.superautocash.mobile.api.controller.response.BaseResponse
+import id.superautocash.mobile.api.entity.User
+import id.superautocash.mobile.api.security.jwt.JwtUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import kotlin.reflect.KClass
@@ -17,6 +21,12 @@ import kotlin.reflect.KClass
 class BaseApiTests: ApplicationTests() {
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var authenticationManager: AuthenticationManager
+
+    @Autowired
+    lateinit var jwtUtils: JwtUtils
 
     private val headers = HttpHeaders()
 
@@ -32,6 +42,13 @@ class BaseApiTests: ApplicationTests() {
         headers.clear()
         headers.add("Content-Type", "application/json")
         headers.add("Accept", "application/json")
+    }
+
+    fun useValidToken(user: User) {
+        val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(user.username, user.password))
+        val token = jwtUtils.generateToken(auth)
+
+        addHeader("Authorization", "Bearer $token")
     }
 
     fun <T: BaseResponse> get(url: String, responseClass: KClass<T>): ApiResponse<T> {
