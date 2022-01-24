@@ -31,6 +31,9 @@ class WebSecurityConfiguration: WebSecurityConfigurerAdapter() {
     @Autowired
     lateinit var authEntryJwtPoint: AuthEntryJwtPoint
 
+    @Autowired
+    lateinit var forbiddenHandler: ForbiddenHandler
+
     override fun configure(auth: AuthenticationManagerBuilder?) {
         auth
             ?.userDetailsService(userDetailsSecurityService)
@@ -45,7 +48,11 @@ class WebSecurityConfiguration: WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity?) {
         http!!.cors().and().csrf().disable()
             .exceptionHandling().authenticationEntryPoint(authEntryJwtPoint).and()
+            .exceptionHandling().accessDeniedHandler(forbiddenHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .authorizeRequests().antMatchers(
+                "/menu/create"
+            ).hasAuthority("2").and()
             .authorizeRequests().antMatchers(
                 "/user/login",
                 "/user/register",

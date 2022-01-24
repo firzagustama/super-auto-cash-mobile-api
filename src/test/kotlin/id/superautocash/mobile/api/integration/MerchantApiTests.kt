@@ -8,7 +8,6 @@ import id.superautocash.mobile.api.entity.User
 import id.superautocash.mobile.api.enums.GeneralExceptionEnum
 import id.superautocash.mobile.api.enums.RoleEnum
 import id.superautocash.mobile.api.repository.UserRepository
-import id.superautocash.mobile.api.security.jwt.JwtUtils
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class MerchantApiTests @Autowired constructor(
     val repository: UserRepository,
-    val jwtUtils: JwtUtils
 ): BaseApiTests() {
 
     lateinit var testUser_user: User

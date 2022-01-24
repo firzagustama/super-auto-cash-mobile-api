@@ -1,29 +1,43 @@
 package id.superautocash.mobile.api.integration
 
+import id.superautocash.mobile.api.controller.request.CreateMenuRequest
+import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
 import id.superautocash.mobile.api.entity.Menu
 import id.superautocash.mobile.api.entity.User
+import id.superautocash.mobile.api.enums.GeneralExceptionEnum
 import id.superautocash.mobile.api.enums.RoleEnum
 import id.superautocash.mobile.api.repository.MenuRepository
 import id.superautocash.mobile.api.repository.UserRepository
 import io.jsonwebtoken.lang.Assert
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class MenuApiTests @Autowired constructor(
     val repository: MenuRepository,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
 ): BaseApiTests() {
 
+    lateinit var testUser: User
     lateinit var merchantUser: User
     lateinit var menus: List<Menu>
 
+    @BeforeEach
+    fun initHeader() {
+        clearHeader()
+    }
+
     @BeforeAll
     fun createTestMenu() {
+        testUser = userRepository.save(User(
+            password = "1234!@#$",
+            roleId = RoleEnum.USER.id,
+            username = "test_user",
+            email = "test.user@gmail.com",
+            phoneNumber = "081938478273",
+            fullName = "Test User Menu"
+        ))
         merchantUser = userRepository.save(User(
             password = "1234!@#$",
             roleId = RoleEnum.MERCHANT.id,
@@ -69,7 +83,7 @@ class MenuApiTests @Autowired constructor(
 
     @AfterAll
     fun deleteTestItem() {
-        userRepository.delete(merchantUser)
+        userRepository.deleteAll(arrayListOf(testUser, merchantUser))
         repository.deleteAll(menus)
     }
 
@@ -107,5 +121,38 @@ class MenuApiTests @Autowired constructor(
         Assert.isNull(response.data?.info?.prev)
         Assert.notNull(response.data?.info?.next)
         Assert.notEmpty(response.data?.menus)
+    }
+
+    @Test
+    fun create_forbiddenRole() {
+        useValidToken(testUser)
+        val request = CreateMenuRequest(
+            name = "Ayam PokPok",
+            imageUrl = "https://testiimage",
+            price = 10000,
+            description = "Lezat loh"
+        )
+        val response = post("/menu/create", request, CreateMenuResponse::class)
+
+        Assert.isTrue(!response.success)
+        Assert.isTrue(response.errorCode == GeneralExceptionEnum.FORBIDDEN.errorCode)
+    }
+
+    @Test
+    fun create_success() {
+        useValidToken(merchantUser)
+        val request = CreateMenuRequest(
+            name = "Ayam PokPok",
+            imageUrl = "https://testiimage",
+            price = 10000,
+            description = "Lezat loh"
+        )
+        val response = post("/menu/create", request, CreateMenuResponse::class)
+
+        Assert.isTrue(response.success)
+        Assert.notNull(response.data)
+        Assert.notNull(response.data!!.id)
+
+        repository.deleteById(response.data!!.id)
     }
 }

@@ -1,9 +1,13 @@
 package id.superautocash.mobile.api.controller
 
+import id.superautocash.mobile.api.controller.request.ApiRequest
+import id.superautocash.mobile.api.controller.request.CreateMenuRequest
 import id.superautocash.mobile.api.controller.response.ApiResponse
+import id.superautocash.mobile.api.controller.response.CreateMenuResponse
 import id.superautocash.mobile.api.controller.response.GetAllMenuResponse
 import id.superautocash.mobile.api.service.MenuService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,6 +25,18 @@ class MenuController @Autowired constructor(
         return ApiResponse(
             success = true,
             data = service.getAll(page, size, merchantId)
+        )
+    }
+
+    @PostMapping(
+        value = ["/create"],
+        produces = ["application/json"],
+        consumes = ["application/json"]
+    )
+    fun create(@RequestBody request: ApiRequest<CreateMenuRequest>): ApiResponse<CreateMenuResponse> {
+        return ApiResponse(
+            success = true,
+            data = service.create(request.data)
         )
     }
 }

@@ -25,7 +25,7 @@ class AuthTokenInterceptor: OncePerRequestFilter(){
             parseJwtToken(request)?.let {
                 if (!jwtUtils.validateToken(it, request)) return@let
                 val user = jwtUtils.getUserFromJwtToken(it)
-                val auth = UsernamePasswordAuthenticationToken(user.username, null, user.authorities).apply {
+                val auth = UsernamePasswordAuthenticationToken(user, null, user.authorities).apply {
                     this.details = WebAuthenticationDetailsSource().buildDetails(request)
                 }
                 SecurityContextHolder.getContext().authentication = auth

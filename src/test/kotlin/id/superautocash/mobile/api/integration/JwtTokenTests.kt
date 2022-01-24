@@ -5,7 +5,6 @@ import id.superautocash.mobile.api.controller.response.BaseResponse
 import id.superautocash.mobile.api.entity.User
 import id.superautocash.mobile.api.repository.UserRepository
 import id.superautocash.mobile.api.security.entity.UserDetailsSecurity
-import id.superautocash.mobile.api.security.jwt.JwtUtils
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.junit.jupiter.api.AfterAll
@@ -14,19 +13,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import java.util.*
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class JwtTokenTests: BaseApiTests() {
-
-    @Autowired
-    lateinit var jwtUtils: JwtUtils
-
-    @Autowired
-    lateinit var authenticationManager: AuthenticationManager
 
     @Autowired
     lateinit var userRepository: UserRepository
