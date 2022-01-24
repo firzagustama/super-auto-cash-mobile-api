@@ -1,5 +1,6 @@
 package id.superautocash.mobile.api.entity
 
+import id.superautocash.mobile.api.controller.model.Menu
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.Column
@@ -17,11 +18,17 @@ data class Menu(
     @Column(name = "merchant_id")
     var merchantId: Int,
 
+    @Column(name = "name")
+    var name: String,
+
     @Column(name = "image_url")
     var imageUrl: String,
 
     @Column(name = "price")
     var price: Int,
+
+    @Column(name = "description")
+    var description: String? = "",
 
     @Column(name = "created_date")
     var createdDate: Timestamp = Timestamp(Date().time),
@@ -29,4 +36,8 @@ data class Menu(
     @Column(name = "updated_date")
     var updatedDate: Timestamp = Timestamp(Date().time)
 
-): BaseEntity()
+): BaseEntity() {
+    fun toMenuModel(): Menu {
+        return Menu(id, merchantId, name, imageUrl, price, description, createdDate, updatedDate)
+    }
+}

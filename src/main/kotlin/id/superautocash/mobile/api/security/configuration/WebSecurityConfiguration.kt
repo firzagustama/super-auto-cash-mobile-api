@@ -46,7 +46,15 @@ class WebSecurityConfiguration: WebSecurityConfigurerAdapter() {
         http!!.cors().and().csrf().disable()
             .exceptionHandling().authenticationEntryPoint(authEntryJwtPoint).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/**/login", "/**/register", "/user/check").permitAll()
+            .authorizeRequests().antMatchers(
+                "/user/login",
+                "/user/register",
+                "/user/check",
+                "/merchant/login",
+                "/merchant/register",
+                "/menu/{\\d+}"
+            )
+            .permitAll()
             .anyRequest().authenticated()
 
         http.addFilterBefore(authTokenInterceptor, UsernamePasswordAuthenticationFilter::class.java)
